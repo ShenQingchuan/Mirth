@@ -173,3 +173,24 @@ func TestScanLineComment(t *testing.T) {
 		}
 	})
 }
+
+func TestScanIdentifierAndKeywords(t *testing.T) {
+	Convey("Test scan identifiers", t, func() {
+		scanner := CreateScanner("a b c 世界 桜が咲く")
+		expectIdentifiers := []string{"a", "b", "c", "世界", "桜が咲く"}
+		for _, identifier := range expectIdentifiers {
+			token := scanner.getNextToken().Unwrap()
+			So(token.Type, ShouldEqual, TokenTypeIdentifier)
+			So(token.Content, ShouldEqual, identifier)
+		}
+	})
+
+	Convey("Test scan keywords", t, func() {
+		for keywordStr, keywordTokenType := range KeywordTokenMap {
+			scanner := CreateScanner(keywordStr)
+			token := scanner.getNextToken().Unwrap()
+			So(token.Type, ShouldEqual, keywordTokenType)
+			So(token.Content, ShouldEqual, keywordStr)
+		}
+	})
+}

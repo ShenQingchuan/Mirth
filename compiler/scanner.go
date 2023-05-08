@@ -152,6 +152,21 @@ func (s *Scanner) readLineComment() *ScanResult {
 	return s.ResultOk(s.makeToken(TokenTypeLineComment, comment))
 }
 
+func (s *Scanner) readIdentifier() *ScanResult {
+	var identifier string
+	for r := s.currentRune; s.offset < len(s.source) && isValidIdentifierRune(r); r = s.currentRune {
+		s.advanceRune()
+		identifier += r.raw
+	}
+	tokenType := TokenTypeIdentifier
+
+	// Check if the identifier is a keyword
+	if keywordTokenType, isKeywordToken := isKeyword(identifier); isKeywordToken {
+		tokenType = keywordTokenType
+	}
+	return s.ResultOk(s.makeToken(tokenType, identifier))
+}
+
 func (s *Scanner) readNumber() *ScanResult {
 	startFromZero := s.currentRune.isRune('0')
 	hasDot := false
@@ -312,6 +327,7 @@ func (s *Scanner) getNextToken() *ScanResult {
 			if isDecimalDigit(r) {
 				return s.readNumber()
 			}
+			return s.readIdentifier()
 		case " ", "\t", "\r":
 			// Skip whitespaces
 			// '\r' is put here because it's a part of '\r\n',

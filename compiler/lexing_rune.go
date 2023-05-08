@@ -1,9 +1,13 @@
 package compiler
 
+import "regexp"
+
 type UniRune struct {
 	raw        string // maybe single rune or multiple runes
 	byteLength int    // length of rune in bytes
 }
+
+var identifierTerminatorRegExp = regexp.MustCompile(`[ \t\n;:,(){}\[\].=?!*/%^|&~><+\-'"]`)
 
 func (r *UniRune) String() string {
 	return string(r.raw)
@@ -65,4 +69,8 @@ func isRadixSymbol(r *UniRune) bool {
 		return false
 	}
 	return isRadixSymbolRune(r.firstRune())
+}
+
+func isValidIdentifierRune(r *UniRune) bool {
+	return !identifierTerminatorRegExp.MatchString(r.raw)
 }

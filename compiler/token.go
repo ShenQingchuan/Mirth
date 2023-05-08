@@ -107,6 +107,11 @@ var KeywordTokenMap = map[string]TokenType{
 	"false":     TokenTypeFalse,
 }
 
+func isKeyword(s string) (TokenType, bool) {
+	t, ok := KeywordTokenMap[s]
+	return t, ok
+}
+
 // Token is the smallest unit of source code.
 // It is used to represent a word, a number, a string, etc.
 type Token struct {
