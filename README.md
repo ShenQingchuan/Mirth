@@ -1,6 +1,6 @@
 <p align="center">
   <img 
-    src="./assets/mirth-logo.png" 
+    src="./assets/mirth-logo-bg.png" 
     height="60"
     alt="logo"
   />

@@ -1,4 +1,5 @@
 {
+  "workbench.colorTheme": "Moegi Dark",
   "gopls": {
     "build.buildFlags": [
       "-tags=tools"

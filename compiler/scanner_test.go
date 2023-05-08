@@ -90,8 +90,8 @@ func TestScanPunctuations(t *testing.T) {
 	expectPuncs := map[string]TokenType{
 		"(":   TokenTypeLeftParen,
 		")":   TokenTypeRightParen,
-		"{":   TokenTypeLeftBrace,
-		"}":   TokenTypeRightBrace,
+		"{":   TokenTypeLeftCurly,
+		"}":   TokenTypeRightCurly,
 		"[":   TokenTypeLeftBracket,
 		"]":   TokenTypeRightBracket,
 		",":   TokenTypeComma,
@@ -226,5 +226,77 @@ func TestScanRune(t *testing.T) {
 		So(result.Err.Code, ShouldEqual, UnexpectedToken)
 		So(result.Err.Msg, ShouldEqual, "Unexpected token: invalid escape symbol 'X'")
 		So(result.Err.Pos.Offset, ShouldEqual, 1)
+	})
+
+	Convey("Test scan multi-emojis grapheme cluster rune", t, func() {
+		scanner := CreateScanner("'👨‍👩‍👧‍👦'")
+		token := scanner.getNextToken().Unwrap()
+		So(token.Type, ShouldEqual, TokenTypeRune)
+		So(token.Content, ShouldEqual, "👨‍👩‍👧‍👦")
+	})
+}
+
+func TestScanString(t *testing.T) {
+	Convey("Test scan string", t, func() {
+		scanner := CreateScanner("\"Hello, world!\"")
+		token := scanner.getNextToken().Unwrap()
+		So(token.Type, ShouldEqual, TokenTypeString)
+		So(token.Content, ShouldEqual, "Hello, world!")
+	})
+
+	Convey("Test scan string with escape characters", t, func() {
+		scanner := CreateScanner("\"Hello,\\nworld! \\u4f60好\"")
+		token := scanner.getNextToken().Unwrap()
+		So(token.Type, ShouldEqual, TokenTypeString)
+		So(token.Content, ShouldEqual, "Hello,\nworld! 你好")
+	})
+
+	Convey("Test scan string with unicode characters", t, func() {
+		scanner := CreateScanner("\"晴空 美しい 🪁\"")
+		token := scanner.getNextToken().Unwrap()
+		So(token.Type, ShouldEqual, TokenTypeString)
+		So(token.Content, ShouldEqual, "晴空 美しい 🪁")
+	})
+
+	Convey("Test scan string but found line break", t, func() {
+		scanner := CreateScanner("\"Hello,\nworld!\"")
+		result := scanner.getNextToken()
+		So(result.Err, ShouldNotBeNil)
+		So(result.Err.Code, ShouldEqual, UnexpectedToken)
+		So(result.Err.Msg, ShouldEqual, "Unexpected line break")
+		So(result.Err.Pos.Offset, ShouldEqual, 7)
+	})
+}
+
+func TestScanTemplateString(t *testing.T) {
+	Convey("Test scan template string", t, func() {
+		scanner := CreateScanner("`my name is ${\"David\" + ` - ${firstName}`}, nice to meet you!`")
+		var tokens []*Token
+		for token := scanner.getNextToken(); token.Ok; token = scanner.getNextToken() {
+			tokens = append(tokens, token.Unwrap())
+		}
+		expectTokenTypes := []struct {
+			tokenType TokenType
+			raw       string
+		}{
+			{TokenTypeTemplateStringQuote, "`"},
+			{TokenTypeTemplateStrFragment, "my name is "},
+			{TokenTypeInterplolationStart, "${"},
+			{TokenTypeString, "David"},
+			{TokenTypePlus, "+"},
+			{TokenTypeTemplateStringQuote, "`"},
+			{TokenTypeTemplateStrFragment, " - "},
+			{TokenTypeInterplolationStart, "${"},
+			{TokenTypeIdentifier, "firstName"},
+			{TokenTypeRightCurly, "}"},
+			{TokenTypeTemplateStringQuote, "`"},
+			{TokenTypeRightCurly, "}"},
+			{TokenTypeTemplateStrFragment, ", nice to meet you!"},
+			{TokenTypeTemplateStringQuote, "`"},
+		}
+		for i, expectTokenType := range expectTokenTypes {
+			So(tokens[i].Type, ShouldEqual, expectTokenType.tokenType)
+			So(tokens[i].Content, ShouldEqual, expectTokenType.raw)
+		}
 	})
 }

@@ -27,8 +27,8 @@ const (
 	TokenTypeColon                 // :
 	TokenTypeLeftParen             // (
 	TokenTypeRightParen            // )
-	TokenTypeLeftBrace             // {
-	TokenTypeRightBrace            // }
+	TokenTypeLeftCurly             // {
+	TokenTypeRightCurly            // }
 	TokenTypeLeftBracket           // [
 	TokenTypeRightBracket          // ]
 	TokenTypeDot                   // .
@@ -73,6 +73,7 @@ const (
 	TokenTypeQuestion              // ?
 	TokenTypeQuestionDot           // ?.
 	TokenTypeDoubleQuestion        // ??
+	TokenTypeTemplateStringQuote   // `
 	TokenTypeInterplolationStart   // ${
 
 	// Literals
@@ -84,7 +85,7 @@ const (
 	TokenTypeFloat
 	TokenTypeRune
 	TokenTypeString
-	TokenTypeTemplateString
+	TokenTypeTemplateStrFragment
 	TokenTypeTrue
 	TokenTypeFalse
 

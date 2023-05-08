@@ -9,11 +9,16 @@ type Result[T any, E IError] struct {
 	Value T
 	Err   E
 	Ok    bool
+	Pass  bool
 }
 
 type IResult[T any, E IError] interface {
 	ResultOk(value T) *Result[T, error]
 	ResultErr(err E) *Result[T, E]
+}
+
+func ResultPass[E IError]() *Result[any, E] {
+	return &Result[any, E]{Ok: true, Pass: true}
 }
 
 func ResultOk[T any, E IError](value T) *Result[T, E] {
