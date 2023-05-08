@@ -8,6 +8,19 @@ type UniRune struct {
 }
 
 var identifierTerminatorRegExp = regexp.MustCompile(`[ \t\n;:,(){}\[\].=?!*/%^|&~><+\-'"]`)
+var singleEscapeSymbolsRuneMap = map[string]string{
+	"n":  "\n",
+	"t":  "\t",
+	"\\": "\\",
+	"'":  "'",
+	"\"": "\"",
+	"r":  "\r",
+	"a":  "\a",
+	"b":  "\b",
+	"f":  "\f",
+	"v":  "\v",
+	"0":  "\000",
+}
 
 func (r *UniRune) String() string {
 	return string(r.raw)

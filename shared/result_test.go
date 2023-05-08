@@ -16,7 +16,7 @@ func (e TestError) Error() string {
 
 func TestResultMonad(t *testing.T) {
 	Convey("Result Monad", t, func() {
-		r := ResultOk(1)
+		r := ResultOk[int, *TestError](1)
 		e := ResultErr[int](
 			&TestError{"This is an test error"},
 		)
@@ -32,7 +32,7 @@ func TestResultMonad(t *testing.T) {
 	})
 
 	Convey("Result Unwrap", t, func() {
-		r := ResultOk(1)
+		r := ResultOk[int, *TestError](1)
 		e := ResultErr[int](
 			&TestError{"This is an test error"},
 		)
@@ -44,7 +44,7 @@ func TestResultMonad(t *testing.T) {
 	})
 
 	Convey("Result UnwrapOr", t, func() {
-		r := ResultOk(1)
+		r := ResultOk[int, *TestError](1)
 		e := ResultErr[int](
 			&TestError{"This is an test error"},
 		)
@@ -54,7 +54,7 @@ func TestResultMonad(t *testing.T) {
 	})
 
 	Convey("Result UnwrapOrElse", t, func() {
-		r := ResultOk(1)
+		r := ResultOk[int, *TestError](1)
 		e := ResultErr[int](
 			&TestError{"This is an test error"},
 		)

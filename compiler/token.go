@@ -73,6 +73,7 @@ const (
 	TokenTypeQuestion              // ?
 	TokenTypeQuestionDot           // ?.
 	TokenTypeDoubleQuestion        // ??
+	TokenTypeInterplolationStart   // ${
 
 	// Literals
 	TokenTypeDecimalInteger

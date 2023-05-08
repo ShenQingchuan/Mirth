@@ -16,8 +16,8 @@ type IResult[T any, E IError] interface {
 	ResultErr(err E) *Result[T, E]
 }
 
-func ResultOk[T any](value T) *Result[T, error] {
-	return &Result[T, error]{Value: value, Ok: true}
+func ResultOk[T any, E IError](value T) *Result[T, E] {
+	return &Result[T, E]{Value: value, Ok: true}
 }
 
 func ResultErr[T any, E IError](err E) *Result[T, E] {

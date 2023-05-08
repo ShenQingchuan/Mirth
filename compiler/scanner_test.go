@@ -194,3 +194,37 @@ func TestScanIdentifierAndKeywords(t *testing.T) {
 		}
 	})
 }
+
+func TestScanRune(t *testing.T) {
+	Convey("Test scan rune", t, func() {
+		scanner := CreateScanner("'\\a' '\\t' '\\n' '\\u4e16' '\\U0001F600' '\\x4d'")
+		expectRunes := []string{"\a", "\t", "\n", "世", "😀", "M"}
+		for _, expectRune := range expectRunes {
+			token := scanner.getNextToken().Unwrap()
+			So(token.Type, ShouldEqual, TokenTypeRune)
+			So(token.Content, ShouldEqual, expectRune)
+		}
+	})
+
+	Convey("Test scan digits after '\\U' must start with 0", t, func() {
+		scanner := CreateScanner("'\\U1F600'")
+		result := scanner.getNextToken()
+		So(result.Err, ShouldNotBeNil)
+		So(result.Err.Code, ShouldEqual, UnexpectedToken)
+		So(
+			result.Err.Msg,
+			ShouldEqual,
+			"Unexpected token: invalid first hexadecimal digit after '\\U' in rune escape sequence. Digits after '\\U' must start with 0",
+		)
+		So(result.Err.Pos.Offset, ShouldEqual, 3)
+	})
+
+	Convey("Test scan invalid escape symbol", t, func() {
+		scanner := CreateScanner("'\\X1DF'")
+		result := scanner.getNextToken()
+		So(result.Err, ShouldNotBeNil)
+		So(result.Err.Code, ShouldEqual, UnexpectedToken)
+		So(result.Err.Msg, ShouldEqual, "Unexpected token: invalid escape symbol 'X'")
+		So(result.Err.Pos.Offset, ShouldEqual, 1)
+	})
+}

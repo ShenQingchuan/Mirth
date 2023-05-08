@@ -1,7 +1,9 @@
 package shared
 
-// Any is an interface that can be used to store any value.
-type Any interface{}
+import (
+	"fmt"
+	"strconv"
+)
 
 // Ternary is a grammar sugar function for ternary operator in other languages.
 func Ternary[T any](condition bool, forTrue, forFalse T) T {
@@ -25,4 +27,16 @@ func GetNumberSuffix(num int) string {
 	} else {
 		return "th"
 	}
+}
+
+func UnicodePointToString(unicodePointStr string) *Result[string, error] {
+	unicodePoints, err := strconv.ParseInt(unicodePointStr, 16, 32)
+	if err != nil {
+		return ResultErr[string](
+			fmt.Errorf("invalid unicode point digits: %s", err.Error()),
+		)
+	}
+	return ResultOk[string, error](
+		string(rune(unicodePoints)),
+	)
 }

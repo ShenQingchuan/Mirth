@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"mirth/shared"
 	"strings"
 
@@ -36,6 +37,14 @@ func CreateScanner[S AvailableSource](source S) *Scanner {
 	}
 	scanner.updatePeekCache()
 	return scanner
+}
+
+func (s *Scanner) getCurrentPosition() *Position {
+	return CreatePositon(
+		s.offset,
+		s.line,
+		s.column,
+	)
 }
 
 func (s *Scanner) peekRune() *UniRune {
@@ -300,6 +309,122 @@ func (s *Scanner) readNumber() *ScanResult {
 	)
 }
 
+func (s *Scanner) readHexSequenceStrForRune(length int) *shared.Result[string, *Diagnostic] {
+	unicodePointString := ""
+	for i := 0; i < length; i++ {
+		if !isHexDigit(s.currentRune) {
+			return shared.ResultErr[string](
+				CreateErrorDiagnostic(
+					UnexpectedToken,
+					s.getCurrentPosition(),
+					fmt.Sprintf(
+						"Unexpected token: invalid hexadecimal digit '%s' in rune escape sequence",
+						string(s.currentRune.raw),
+					),
+				),
+			)
+		}
+		unicodePointString += string(s.currentRune.raw)
+		s.advanceRune()
+	}
+	// Convert the hexadecimal string to Golang rune
+	strFromUnicodePoint := shared.UnicodePointToString(unicodePointString)
+	if !strFromUnicodePoint.Ok {
+		return shared.ResultErr[string](
+			CreateErrorDiagnostic(
+				UnexpectedToken,
+				s.getCurrentPosition(),
+				strFromUnicodePoint.Err.Error(),
+			),
+		)
+	}
+	return shared.ResultOk[string, *Diagnostic](
+		strFromUnicodePoint.Unwrap(),
+	)
+}
+
+func (s *Scanner) readRune() *ScanResult {
+	// Moving over the first quote
+	s.advanceRune()
+
+	var runeContent string
+	for !s.currentRune.isRune('\'') {
+		if s.currentRune.isRune('\n') {
+			return s.createScanResultErr(
+				UnexpectedToken,
+				"Unexpected token: newline is not allowed in character literal",
+			)
+		}
+
+		if s.currentRune.isRune('\\') {
+			if escaped, isSingleEscape := singleEscapeSymbolsRuneMap[s.nextRune.raw]; isSingleEscape {
+				runeContent += escaped
+				s.advanceRuneByStep(2) // Moving over the '\' and the escaped symbol
+				continue
+			}
+
+			switch s.nextRune.raw {
+			case "x":
+				s.advanceRuneByStep(2) // Moving over the '\x'
+				hexSeqStrResult := s.readHexSequenceStrForRune(2)
+				if !hexSeqStrResult.Ok {
+					return s.createScanResultErr(
+						hexSeqStrResult.Err.Code,
+						hexSeqStrResult.Err.Msg,
+					)
+				}
+				runeContent += hexSeqStrResult.Unwrap()
+			case "u":
+				s.advanceRuneByStep(2) // Moving over the '\u'
+				hexSeqStrResult := s.readHexSequenceStrForRune(4)
+				if !hexSeqStrResult.Ok {
+					return s.createScanResultErr(
+						hexSeqStrResult.Err.Code,
+						hexSeqStrResult.Err.Msg,
+					)
+				}
+				runeContent += hexSeqStrResult.Unwrap()
+			case "U":
+				s.advanceRuneByStep(2) // Moving over the '\U'
+
+				// Digits after \U must start with 0
+				if !s.currentRune.isRune('0') {
+					return s.createScanResultErr(
+						UnexpectedToken,
+						"Unexpected token: invalid first hexadecimal digit after '\\U' in rune escape sequence. Digits after '\\U' must start with 0",
+					)
+				}
+
+				hexSeqStrResult := s.readHexSequenceStrForRune(8)
+				if !hexSeqStrResult.Ok {
+					return s.createScanResultErr(
+						hexSeqStrResult.Err.Code,
+						hexSeqStrResult.Err.Msg,
+					)
+				}
+				runeContent += hexSeqStrResult.Unwrap()
+			default:
+				return s.createScanResultErr(
+					UnexpectedToken,
+					fmt.Sprintf(
+						"Unexpected token: invalid escape symbol '%s'",
+						string(s.nextRune.raw),
+					),
+				)
+			}
+		} else {
+			runeContent += string(s.currentRune.raw)
+			s.advanceRune()
+		}
+	}
+
+	// Moving over the last quote
+	s.advanceRune()
+	return s.ResultOk(
+		s.makeToken(TokenTypeRune, runeContent),
+	)
+}
+
 func (s *Scanner) resultSingleRuneToken(tokenType TokenType, tokenContent string) *ScanResult {
 	s.advanceRune()
 	return s.ResultOk(
@@ -459,6 +584,8 @@ func (s *Scanner) getNextToken() *ScanResult {
 				return s.resultMultiRuneToken(TokenTypeQuestionDot, "?.")
 			}
 			return s.resultSingleRuneToken(TokenTypeQuestion, r.raw)
+		case "'":
+			return s.readRune()
 		}
 	}
 

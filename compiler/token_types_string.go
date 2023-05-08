@@ -73,23 +73,24 @@ func _() {
 	_ = x[TokenTypeQuestion-63]
 	_ = x[TokenTypeQuestionDot-64]
 	_ = x[TokenTypeDoubleQuestion-65]
-	_ = x[TokenTypeDecimalInteger-66]
-	_ = x[TokenTypeOctalInteger-67]
-	_ = x[TokenTypeHexadecimalInteger-68]
-	_ = x[TokenTypeBinaryInteger-69]
-	_ = x[TokenTypeExponent-70]
-	_ = x[TokenTypeFloat-71]
-	_ = x[TokenTypeRune-72]
-	_ = x[TokenTypeString-73]
-	_ = x[TokenTypeTemplateString-74]
-	_ = x[TokenTypeTrue-75]
-	_ = x[TokenTypeFalse-76]
-	_ = x[TokenTypeLineComment-77]
+	_ = x[TokenTypeInterplolationStart-66]
+	_ = x[TokenTypeDecimalInteger-67]
+	_ = x[TokenTypeOctalInteger-68]
+	_ = x[TokenTypeHexadecimalInteger-69]
+	_ = x[TokenTypeBinaryInteger-70]
+	_ = x[TokenTypeExponent-71]
+	_ = x[TokenTypeFloat-72]
+	_ = x[TokenTypeRune-73]
+	_ = x[TokenTypeString-74]
+	_ = x[TokenTypeTemplateString-75]
+	_ = x[TokenTypeTrue-76]
+	_ = x[TokenTypeFalse-77]
+	_ = x[TokenTypeLineComment-78]
 }
 
-const _TokenType_name = "TokenTypeIdentifierTokenTypeLetTokenTypeConstTokenTypeFuncTokenTypeIfTokenTypeElseTokenTypeForTokenTypeLoopTokenTypeReturnTokenTypeBreakTokenTypeContinueTokenTypeStructTokenTypeInterfaceTokenTypeLineBreakTokenTypeSemiTokenTypeCommaTokenTypeColonTokenTypeLeftParenTokenTypeRightParenTokenTypeLeftBraceTokenTypeRightBraceTokenTypeLeftBracketTokenTypeRightBracketTokenTypeDotTokenTypeEqualTokenTypeDoubleEqualTokenTypeBangEqualTokenTypePlusTokenTypeMinusTokenTypeStarTokenTypeDoubleStarTokenTypeSlashTokenTypePercentTokenTypeAlphaTokenTypeWavyTokenTypeCaretTokenTypeAmpersandTokenTypeBangTokenTypeVerticalTokenTypeLeftAngleTokenTypeRightAngleTokenTypeDoubleLeftAngleTokenTypeDoubleRightAngleTokenTypeDoubleAmpersandTokenTypeDoubleVerticalTokenTypeLeftAngleEqualTokenTypeRightAngleEqualTokenTypeArrowTokenTypeDoublePlusTokenTypeDoubleMinusTokenTypePlusEqualTokenTypeMinusEqualTokenTypeStarEqualTokenTypeSlashEqualTokenTypePercentEqualTokenTypeDoubleLeftAngleEqualTokenTypeDoubleRightAngleEqualTokenTypeAmpersandEqualTokenTypeVerticalEqualTokenTypeCaretEqualTokenTypeEllipsisTokenTypeDoubleDotsTokenTypeQuestionTokenTypeQuestionDotTokenTypeDoubleQuestionTokenTypeDecimalIntegerTokenTypeOctalIntegerTokenTypeHexadecimalIntegerTokenTypeBinaryIntegerTokenTypeExponentTokenTypeFloatTokenTypeRuneTokenTypeStringTokenTypeTemplateStringTokenTypeTrueTokenTypeFalseTokenTypeLineComment"
+const _TokenType_name = "TokenTypeIdentifierTokenTypeLetTokenTypeConstTokenTypeFuncTokenTypeIfTokenTypeElseTokenTypeForTokenTypeLoopTokenTypeReturnTokenTypeBreakTokenTypeContinueTokenTypeStructTokenTypeInterfaceTokenTypeLineBreakTokenTypeSemiTokenTypeCommaTokenTypeColonTokenTypeLeftParenTokenTypeRightParenTokenTypeLeftBraceTokenTypeRightBraceTokenTypeLeftBracketTokenTypeRightBracketTokenTypeDotTokenTypeEqualTokenTypeDoubleEqualTokenTypeBangEqualTokenTypePlusTokenTypeMinusTokenTypeStarTokenTypeDoubleStarTokenTypeSlashTokenTypePercentTokenTypeAlphaTokenTypeWavyTokenTypeCaretTokenTypeAmpersandTokenTypeBangTokenTypeVerticalTokenTypeLeftAngleTokenTypeRightAngleTokenTypeDoubleLeftAngleTokenTypeDoubleRightAngleTokenTypeDoubleAmpersandTokenTypeDoubleVerticalTokenTypeLeftAngleEqualTokenTypeRightAngleEqualTokenTypeArrowTokenTypeDoublePlusTokenTypeDoubleMinusTokenTypePlusEqualTokenTypeMinusEqualTokenTypeStarEqualTokenTypeSlashEqualTokenTypePercentEqualTokenTypeDoubleLeftAngleEqualTokenTypeDoubleRightAngleEqualTokenTypeAmpersandEqualTokenTypeVerticalEqualTokenTypeCaretEqualTokenTypeEllipsisTokenTypeDoubleDotsTokenTypeQuestionTokenTypeQuestionDotTokenTypeDoubleQuestionTokenTypeInterplolationStartTokenTypeDecimalIntegerTokenTypeOctalIntegerTokenTypeHexadecimalIntegerTokenTypeBinaryIntegerTokenTypeExponentTokenTypeFloatTokenTypeRuneTokenTypeStringTokenTypeTemplateStringTokenTypeTrueTokenTypeFalseTokenTypeLineComment"
 
-var _TokenType_index = [...]uint16{0, 19, 31, 45, 58, 69, 82, 94, 107, 122, 136, 153, 168, 186, 204, 217, 231, 245, 263, 282, 300, 319, 339, 360, 372, 386, 406, 424, 437, 451, 464, 483, 497, 513, 527, 540, 554, 572, 585, 602, 620, 639, 663, 688, 712, 735, 758, 782, 796, 815, 835, 853, 872, 890, 909, 930, 959, 989, 1012, 1034, 1053, 1070, 1089, 1106, 1126, 1149, 1172, 1193, 1220, 1242, 1259, 1273, 1286, 1301, 1324, 1337, 1351, 1371}
+var _TokenType_index = [...]uint16{0, 19, 31, 45, 58, 69, 82, 94, 107, 122, 136, 153, 168, 186, 204, 217, 231, 245, 263, 282, 300, 319, 339, 360, 372, 386, 406, 424, 437, 451, 464, 483, 497, 513, 527, 540, 554, 572, 585, 602, 620, 639, 663, 688, 712, 735, 758, 782, 796, 815, 835, 853, 872, 890, 909, 930, 959, 989, 1012, 1034, 1053, 1070, 1089, 1106, 1126, 1149, 1177, 1200, 1221, 1248, 1270, 1287, 1301, 1314, 1329, 1352, 1365, 1379, 1399}
 
 func (i TokenType) String() string {
 	i -= 1
